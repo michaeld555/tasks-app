@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "Gerenciador de Tarefas",
+    "slug": "tasks-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "tasks-app",
+    "splash": {
+      "image": "./src/assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.michaeld555.tasksapp"
+    },
+    "web": {
+      "favicon": "./src/assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b7dc286a-1f84-4b79-bd87-e6c24edda2ff"
+      }
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}
