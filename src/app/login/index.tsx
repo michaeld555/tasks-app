@@ -12,6 +12,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import Logo from '../../assets/logo-auth.png';
 import { AuthContext } from '../../contexts/Auth';
 import { styles } from '../../styles/login';
+import { toast } from 'sonner-native';
 
 export default function Login() {
 
@@ -30,7 +31,19 @@ export default function Login() {
 
       setLoading(true);
 
-      await login(form.username, form.password);
+      try {
+
+        await login(form.username, form.password);
+
+      } catch (error: any) {
+
+        toast.error(error.message || "Erro ao fazer login");
+
+      } finally {
+
+        setLoading(false);
+
+      }
 
     }
 

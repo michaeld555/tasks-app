@@ -25,8 +25,7 @@ export default function Profile() {
     });
 
     const [user, setUser] = useState({
-        firstName: '-',
-        lastName: '-',
+        name: '-',
         email: '-',
     });
 
@@ -34,13 +33,13 @@ export default function Profile() {
 
         try {
 
-            const response = await api.get("/account");
+            const response = await api.get("/profile");
 
             console.log(response.data);
 
             if (response.data) {
 
-                setUser(response.data);
+                setUser(response.data.data);
 
             }
 
@@ -77,7 +76,7 @@ export default function Profile() {
                     }}
                     style={styles.profileAvatar} />
                 <View style={styles.profileBody}>
-                    <Text style={styles.profileName}> {user.firstName} </Text>
+                    <Text style={styles.profileName}> {user.name} </Text>
                     <Text style={styles.profileHandle}> {user.email} </Text>
                 </View>
                 </TouchableOpacity>
@@ -163,8 +162,6 @@ export default function Profile() {
                     onPress={() => {
 
                         logout();
-                        
-                        router.replace('/login');
 
                     }}
                     style={styles.rowLogout}>
@@ -176,7 +173,7 @@ export default function Profile() {
             </View>
             </View>
 
-            <Text style={styles.contentFooter}>build 2.24 #50491</Text>
+            <Text style={styles.contentFooter}>build 1.00 #0001</Text>
 
         </ScrollView>
         </SafeAreaView>

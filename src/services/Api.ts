@@ -2,7 +2,7 @@ import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const api = axios.create({
-    baseURL: "http://44.216.255.11/remsoft/api",
+    baseURL: "https://tasks-app-g4mfh.ondigitalocean.app/api",
     headers: {
         "Content-Type": "application/json",
     },
@@ -10,16 +10,20 @@ const api = axios.create({
 
 api.interceptors.request.use(async (config) => {
 
-    const token = await AsyncStorage.getItem("token");
+    const data = await AsyncStorage.getItem("credentials");
 
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+    const credentials = data ? JSON.parse(data) : null;
+
+    if (credentials) {
+        config.headers.Authorization = `Bearer ${credentials.token}`;
     }
 
     return config;
     
 }, (error) => {
+
     return Promise.reject(error);
+    
 });
 
 export default api;

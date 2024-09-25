@@ -46,10 +46,11 @@ export const styles = StyleSheet.create({
   },
   searchEmpty: {
     textAlign: 'center',
-    paddingTop: 16,
+    paddingTop: 25,
     fontWeight: '500',
-    fontSize: 15,
+    fontSize: 18,
     color: '#9ca1ac',
+    marginLeft: -24,
   },
   /** Card */
   card: {
@@ -79,12 +80,14 @@ export const styles = StyleSheet.create({
     color: '#fff',
   },
   cardBody: {
-    marginRight: 'auto',
+    flex: 1,
     marginLeft: 12,
+    marginRight: 12,
   },
   cardTitle: {
     fontSize: 16,
     fontWeight: '700',
+    flex: 1,
     color: '#000',
     marginBottom: 8,
   },
@@ -102,18 +105,17 @@ export const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
   },
   cardStatsItem: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 8,
+    marginRight: 12,
   },
   cardStatsItemText: {
     fontSize: 13,
     fontWeight: '500',
     color: '#636a73',
-    marginLeft: 2,
+    marginLeft: 4,
   },
 });

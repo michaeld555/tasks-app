@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from "../services/Api";
 import { router } from "expo-router";
 import { jwtDecode } from 'jwt-decode';
+import { toast } from 'sonner-native';
 
 export const AuthContext = createContext({
     login: (username: string, password: string) => Promise.resolve(),
@@ -18,33 +19,72 @@ function AuthProvider({ children }: any) {
 
             const data = JSON.stringify({
                 username,
-                password,
-                rememberMe: false
+                password
             });
 
-            const response = await api.post("/authenticate", data);
+            const response = await api.post("/login", data);
 
-            if (response.data && response.data.id_token) {
+            console.log(response.data);
 
-                console.log(response.data);
+            if (response.data) {
 
-                await AsyncStorage.setItem('token', response.data.id_token);
+                let credentials = {
+                    token: response.data.data.token,
+                    username: username,
+                    password: password
+                };
+
+                await AsyncStorage.setItem('credentials', JSON.stringify(credentials));
 
                 router.replace('/home');
 
+            } else {
+
+                throw new Error("Erro ao fazer login. Por favor, tente novamente.");
+
             }
 
-        } catch (error) {
-            console.error("Erro ao fazer login:", error);
+        } catch (error: any) {
+
+            if (error.response && error.response.data && error.response.data.message) {
+
+                throw new Error(error.response.data.message);
+
+            } else {
+
+                throw new Error("Erro ao fazer login. Por favor, tente novamente.");
+
+            }
+
         }
     };
 
     const checkLogin = async () => {
 
-        const token = await AsyncStorage.getItem("token");
+        const data = await AsyncStorage.getItem("credentials");
 
-        if (token && token != '') {
+        const credentials = data ? JSON.parse(data) : null;
+
+        if (credentials) {
+
+            if (!isTokenValid(credentials.token)) {
+
+                try {
+
+                    await login(credentials.username, credentials.password);
+            
+                } catch (error: any) {
+            
+                    toast.error("Erro ao autenticar usuário, efetue login novamente.");
+
+                    await logout();
+            
+                }
+
+            }
+
             return true;
+
         }
 
         return false;
@@ -71,8 +111,6 @@ function AuthProvider({ children }: any) {
 
         } catch (error) {
 
-            console.error('Erro ao decodificar o token', error);
-
             return false;
 
         }
@@ -81,7 +119,9 @@ function AuthProvider({ children }: any) {
 
     const logout = async () => {
 
-        await AsyncStorage.setItem('token', '');
+        await AsyncStorage.removeItem('credentials');
+
+        router.replace('/login');
 
     };
 
