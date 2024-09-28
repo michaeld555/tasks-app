@@ -14,6 +14,7 @@ import { styles } from '../../../styles/projects';
 import { Project } from '../../../interfaces/Project';
 import api from '../../../services/Api';
 import ListCardSkeleton from '../../../components/Projects/ListCardSkeleton';
+import { router } from 'expo-router';
 
 export default function Projects() {
 
@@ -22,6 +23,8 @@ export default function Projects() {
     const [loading, setLoading] = useState(true);
 
     const [projects, setProjects] = useState<Project[]>([]);
+
+    const opacity = useState(new Animated.Value(0))[0];
 
     const searchProjects = async () => {
 
@@ -80,6 +83,18 @@ export default function Projects() {
 
     }, []);
 
+    useEffect(() => {
+
+        if (!loading) {
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 400,
+            useNativeDriver: true,
+          }).start();
+        }
+
+    }, [loading]);
+
     return (
 
         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -113,13 +128,18 @@ export default function Projects() {
 
                     <ListCardSkeleton />
 
-                ) : filteredRows.length ? (
-                    filteredRows.map(({ project_logo, project_name, total_time_spent, members_count }, index) => {
+                ) : (
+
+                    <Animated.View style={{ opacity }}>
+
+                    {filteredRows.length ? (
+
+                    filteredRows.map(({ project_id, project_logo, project_name, total_time_spent, members_count, identifier }, index) => {
                         return (
                         <View key={index} style={styles.cardWrapper}>
                             <TouchableOpacity
                                 onPress={() => {
-                                    // handle onPress
+                                    router.navigate('project/' + identifier);
                                 }}>
                                     
                                 <View style={styles.card}>
@@ -166,11 +186,13 @@ export default function Projects() {
                             </TouchableOpacity>
                         </View>
                     );
+                    
                 })
                 ) : (
                     <Text style={styles.searchEmpty}>Sem resultados...</Text>
                 )}
-
+                </Animated.View>
+                )}
                 </ScrollView>
             </View>
 

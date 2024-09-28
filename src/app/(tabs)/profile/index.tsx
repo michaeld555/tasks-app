@@ -14,19 +14,21 @@ import { router } from 'expo-router';
 import api from '../../../services/Api';
 import { stringMd5 } from 'react-native-quick-md5';
 import { styles } from '../../../styles/profile';
+import { Skeleton } from "moti/skeleton";
+import { SkeletonProps } from '../../../core/SkeletonProps';
 
 export default function Profile() {
 
     const { logout } = useContext(AuthContext);
 
-    const [form, setForm] = useState({
-        emailNotifications: true,
-        pushNotifications: false,
-    });
+    const [loading, setLoading] = useState(true);
 
     const [user, setUser] = useState({
         name: '-',
         email: '-',
+        profile_photo: '',
+        alerts: true,
+        notifications: true,
     });
 
     const checkUser = async () => {
@@ -35,8 +37,6 @@ export default function Profile() {
 
             const response = await api.get("/profile");
 
-            console.log(response.data);
-
             if (response.data) {
 
                 setUser(response.data.data);
@@ -44,8 +44,15 @@ export default function Profile() {
             }
 
         } catch (error) {
+
             console.error("Erro ao buscar dados do usuário:", error);
+
+        } finally {
+
+            setLoading(false);
+
         }
+
     };
 
     useEffect(() => {
@@ -66,19 +73,25 @@ export default function Profile() {
             <View style={styles.sectionBody}>
                 <TouchableOpacity
                 onPress={() => {
-                    // handle onPress
+                    //
                 }}
                 style={styles.profile}>
-                <Image
-                    alt=""
-                    source={{
-                    uri: `https://www.gravatar.com/avatar/${stringMd5(user.email)}`,
-                    }}
-                    style={styles.profileAvatar} />
-                <View style={styles.profileBody}>
-                    <Text style={styles.profileName}> {user.name} </Text>
-                    <Text style={styles.profileHandle}> {user.email} </Text>
-                </View>
+                    <Skeleton show={loading} height={60} width={60} radius={999} {...SkeletonProps}>
+                        <Image
+                            alt="Profile Avatar"
+                            source={{
+                            uri: `https://www.gravatar.com/avatar/${stringMd5(user.email)}`,
+                            }}
+                            style={styles.profileAvatar} />
+                    </Skeleton>
+                    <View style={styles.profileBody}>
+                        <Skeleton show={loading} height={19} width={'80%'} {...SkeletonProps}>
+                            <Text style={styles.profileName}> {user.name} </Text>
+                        </Skeleton>
+                        <Skeleton show={loading} height={19} width={'60%'} {...SkeletonProps}>
+                            <Text style={styles.profileHandle}> {user.email} </Text>
+                        </Skeleton>
+                    </View>
                 </TouchableOpacity>
             </View>
 
@@ -111,7 +124,7 @@ export default function Profile() {
                     // handle onPress
                     }}
                     style={styles.row}>
-                    <Text style={styles.rowLabel}>Relatório de horas</Text>
+                    <Text style={styles.rowLabel}>Integração com AI</Text>
                     <View style={styles.rowSpacer} />
                     <FontAwesome
                     color="#bcbcbc"
@@ -122,14 +135,14 @@ export default function Profile() {
 
                 <View style={styles.rowWrapper}>
                 <View style={styles.row}>
-                    <Text style={styles.rowLabel}>Alertas de horário</Text>
+                    <Text style={styles.rowLabel}>Alertas de tarefas</Text>
                     <View style={styles.rowSpacer} />
                     <Switch
-                    onValueChange={emailNotifications =>
-                        setForm({ ...form, emailNotifications })
+                    onValueChange={alerts =>
+                        setUser({ ...user, alerts })
                     }
                     style={{ transform: [{ scaleX: 0.95 }, { scaleY: 0.95 }] }}
-                    value={form.emailNotifications} />
+                    value={user.alerts} />
                 </View>
                 </View>
 
@@ -138,11 +151,11 @@ export default function Profile() {
                     <Text style={styles.rowLabel}>Notificações Push</Text>
                     <View style={styles.rowSpacer} />
                     <Switch
-                    onValueChange={pushNotifications =>
-                        setForm({ ...form, pushNotifications })
+                    onValueChange={notifications =>
+                        setUser({ ...user, notifications })
                     }
                     style={{ transform: [{ scaleX: 0.95 }, { scaleY: 0.95 }] }}
-                    value={form.pushNotifications} />
+                    value={user.notifications} />
                 </View>
                 </View>
 
